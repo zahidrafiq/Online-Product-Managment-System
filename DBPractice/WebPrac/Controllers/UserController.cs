@@ -36,16 +36,54 @@ namespace WebPrac.Controllers
         }
 
         [HttpGet]
-        public ActionResult Register()
+        public ActionResult SignUp()
         {
             return View();
         }
 
         [HttpPost]
-        public ActionResult Save(UserDTO dto)
+        public ActionResult Save(UserDTO user)
         {
-            //User Save Logic
-            return View();
+            var file = Request.Files["PictureName"];
+            String uniqName = "";
+            if (file.FileName != "")
+            {
+                var ext = System.IO.Path.GetExtension ( file.FileName );
+
+                //Generate a unique name using Guid
+                uniqName = Guid.NewGuid () + ext;
+
+                //Getting physical Location where We have to save picture
+                var rootPath = Server.MapPath ( "~/userpics" );
+
+                var fileSavePath = System.IO.Path.Combine ( rootPath, uniqName );
+
+                //Save the uploaded image
+                file.SaveAs ( fileSavePath );
+                // System.IO.File.Copy(uniqName,rootPath);
+                user.PictureName = uniqName;
+                user.IsAdmin = false;
+                user.IsActive = true;
+                int rv = PMS.BAL.UserBO.Save ( user ); //rv contain id of user
+                if (rv > 0)
+                {
+                    Session["NewUserName"] = user.Name;
+                    Session["LoginUsrID"] = rv;
+                    TempData["msg"] = "Record is saved successfully!";
+                    Session["PictureName"] = user.PictureName;
+                    ViewBag.usr = user;
+                    return View ( "UserWelcome" ,user );//It will change url as well
+                                                                //  return View("UserHome");
+                }
+            }
+
+            return View ( "Error" );
+        }
+
+
+        public ActionResult UserWelcome()
+        {
+            return View ();
         }
 
         [HttpGet]

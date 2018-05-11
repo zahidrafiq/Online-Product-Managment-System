@@ -20,13 +20,13 @@ namespace PMS.DAL
             }
             else
             {
-                sqlQuery = String.Format("INSERT INTO dbo.Users(Name, Login,Password, PictureName, IsAdmin,IsActive) VALUES('{0}','{1}','{2}','{3}',{4},{5})",
-                    dto.Name, dto.Login, dto.Password, dto.PictureName, 0, 1);
+                sqlQuery = String.Format("INSERT INTO dbo.Users(Name, Login,Password, PictureName, IsAdmin,IsActive) VALUES('{0}','{1}','{2}','{3}',{4},{5});select @@IDENTITY",
+                    dto.Name, dto.Login, dto.Password, dto.PictureName, 0,1);
             }
 
             using (DBHelper helper = new DBHelper())
             {
-                return helper.ExecuteQuery(sqlQuery);
+                return Convert.ToInt32(helper.ExecuteScalar(sqlQuery));
             }
         }
 

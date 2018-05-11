@@ -9,13 +9,19 @@ namespace WebPrac.Controllers
 {
     public class HomeController : Controller
     {
-        public ActionResult Test()
+        //public ActionResult Test()
+        //{
+        //    int c = 0;
+        //    int b = 0;
+        //    int a = 0;
+        //    return null;
+        //}
+
+        public ActionResult Index ()
         {
-            int c = 0;
-            int b = 0;
-            int a = 0;
-            return null;
+            return View ();
         }
+
         public ActionResult Admin()
         {
             if (SessionManager.IsValidUser)

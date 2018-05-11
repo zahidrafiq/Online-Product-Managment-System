@@ -1,0 +1,29 @@
+﻿@model PMS.Entities.UserDTO
+@{
+    Layout = "~/Views/Shared/_HeaderLayout.cshtml";
+    String img = "";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>UserHome</title>
+    
+</head>
+<body>
+
+    <div>
+        <h1>Welcome <fone size="7" style="color:forestgreen">@Model.Name </fone></h1>
+
+
+        <div style="position:absolute;top:80px;left:697px;border:5px solid black;">
+            <img src="~/userpics/@Model.PictureName"  style="width:250px; height:270px;" />
+        </div>
+
+        <div style="position:absolute;top:45%;left:45%">
+        </div>
+    </div>
+</body>
+</html>
