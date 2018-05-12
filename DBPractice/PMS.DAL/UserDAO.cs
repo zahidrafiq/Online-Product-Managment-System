@@ -15,19 +15,29 @@ namespace PMS.DAL
             String sqlQuery = "";
             if (dto.UserID > 0)
             {
-                sqlQuery = String.Format("Update dbo.Users Set Name='{0}', PictureName='{1}' Where UserID={2}",
+                sqlQuery = String.Format( "Update dbo.Users Set Name='{0}', PictureName='{1}' Where UserID={2} ;select @@IDENTITY",
                     dto.Name, dto.PictureName, dto.UserID);
+                using (DBHelper helper = new DBHelper ())
+                {
+                     int rowsAffected=helper.ExecuteQuery ( sqlQuery );
+                    if (rowsAffected > 0)
+                        return -1;
+                    else
+                        return -2;
+                }
+
             }
             else
             {
                 sqlQuery = String.Format("INSERT INTO dbo.Users(Name, Login,Password, PictureName, IsAdmin,IsActive) VALUES('{0}','{1}','{2}','{3}',{4},{5});select @@IDENTITY",
-                    dto.Name, dto.Login, dto.Password, dto.PictureName, 0,1);
+                dto.Name, dto.Login, dto.Password, dto.PictureName, 0,1);
+                using (DBHelper helper = new DBHelper ())
+                {
+                    return Convert.ToInt32 ( helper.ExecuteScalar ( sqlQuery ) );
+                }
             }
 
-            using (DBHelper helper = new DBHelper())
-            {
-                return Convert.ToInt32(helper.ExecuteScalar(sqlQuery));
-            }
+            
         }
 
         public static int UpdatePassword(UserDTO dto)

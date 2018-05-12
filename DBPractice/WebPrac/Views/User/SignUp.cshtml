@@ -1,24 +1,37 @@
-﻿
+﻿@model PMS.Entities.UserDTO
 @{
     ViewBag.Title = "SignUp";
     Layout = "~/Views/Shared/_HeaderLayout.cshtml";
 }
+<script>
+    $(function(){
+    $("#btnCancel").click(function(){
+        $("#txtLogin").val("");
+        $("#txtName").val("");
+        $("#txtPassword").val("");
+    });
+    });
+</script>
 
 <h2>SignUp</h2>
-<div class="formPos" style="border:6px solid black;width:400px;height:550px;top:10%">
+<div class="formPos" style="border:6px solid black;width:400px;height:550px;top:10%; background-color:antiquewhite;">
     <div class="chngBackgrnd" style="padding-left:30px;font-size:30px;text-align:center;width:370px;height:60px;">User Bio Data</div><br>
     <br />
-    <form action=@Url.Content("~/User/Save") method="post" enctype="multipart/form-data">
-        <input type="text" hidden name="txtID" id="UserID" />
+    <form action=@Url.Content( "~/User/Save" ) method="post" enctype="multipart/form-data">
+        <input type="text" hidden name="UserID" id="UserID" value="@Model.UserID"/>
         <table class="forms">
-            <tr><td>Name </td><td><input type="text" name="Name" id="txtName" style="width:85%;margin-bottom:5%;" /></td></tr>
-            <tr><td>Login</td><td> <input type="text" name="Login" id="txtLogin" style="width:85%;margin-bottom:5%;" /></td></tr>
-            <tr><td>Password</td><td><input type="password" name="Password" id="txtPassword" style="width:85%;margin-bottom:5%;"  /></td></tr>
+            <tr><td>Name </td><td><input type="text" name="Name" id="txtName" value="@Model.Name" style="width:85%;margin-bottom:5%;" required/></td></tr>
+            <tr><td>Login</td><td> <input type="text" name="Login" id="txtLogin" value="@Model.Login" style="width:85%;margin-bottom:5%;" required/></td></tr>
+            @{ if (!(Model.UserID > 0))
+                {
+            <tr><td>Password</td><td><input type="password" name="Password" id="txtPassword" value="@Model.Password" style="width:85%;margin-bottom:5%;"  required/></td></tr>
+                }
+             }
             <tr><td>Picture</td><td><input type="file" name="PictureName" id="img"  /></td></tr>
         </table>
         <div style="position:relative;left:30%;top:20%">
-            <br><input class="btn" type="submit" name="btnSave"  value="Save" style="width:30%;" />
-            <input class="btn" type="reset" name="btnSave" value="Cancel" style="width:30%;" />
+            <br><input class="btn" type="submit" name="btnSave" value="Save" style="width:30%;" />
+            <input class="btn" type="button" id="btnCancel" value="Cancel" style="width:30%;" />
         </div>
     </form>
 </div>

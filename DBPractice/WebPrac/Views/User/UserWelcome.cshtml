@@ -1,8 +1,7 @@
 ﻿@model PMS.Entities.UserDTO
 @{
     Layout = "~/Views/Shared/_HeaderLayout.cshtml";
-    String img = "";
-}
+ }
 
 <!DOCTYPE html>
 
@@ -20,9 +19,10 @@
 
         <div style="position:absolute;top:80px;left:697px;border:5px solid black;">
             <img src="~/userpics/@Model.PictureName"  style="width:250px; height:270px;" />
-        </div>
-
+         </div>
+        
         <div style="position:absolute;top:45%;left:45%">
+            <input class="btn" type="submit" name="btnEdit" id="btnEdit" value="Edit Profile" onclick="@("window.location.href='" + @Url.Action("SignUp", "User") + "'" );" />
         </div>
     </div>
 </body>

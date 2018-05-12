@@ -7,12 +7,11 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
+    <link href="~/Scripts/MyStyleSheet.css" rel="stylesheet" />
     <title>_MyProductLayout</title>
     <style>
-        .menu a {
-            padding: 5px;
-            background-color: lightgrey;
-            color: red;
+        body{
+    	background-color:#e0ffff;
         }
 
         .prodbox {
@@ -55,27 +54,27 @@
 
 </head>
 <body>
-    <div id="overlay" class="overlay">
+    <div class="menubase" style="height:6%;position:fixed;left:0px;top:0px;">
+        <div >
+            @if (WebPrac.Security.SessionManager.User.IsAdmin)
+            {
+                <a class="btn" href="/Home/Admin">Home</a>
+                <a class="btn" href="/Product/ShowAll">Show All</a>
+                <a class="btn" href="/Product2/New">New Product</a>
+            }
+            else
+            {
+                <a class="btn" href="/Home/NormalUser">Home</a>
+                <a class="btn" href="/Product/ShowAll">Show All</a>
+                <a class="btn" href="/User/SignUp">Edit Profile</a>
+            }
+  
+            <a class="btn" href="/User/Logout">Logout</a>
 
+         </div>
+        
+        
     </div>
-
-    <div class="menu">
-        @if (WebPrac.Security.SessionManager.User.IsAdmin)
-        {
-            <a href="/Home/Admin">Home</a>
-            <a href="/Product/ShowAll">Show All</a>
-            @*<a href="/Product/New">New Product</a>*@
-        }
-        else
-        {
-            <a href="/Home/NormalUser">Home</a>
-            <a href="/Product/ShowAll">Show All</a>
-        }
-
-        <a href="/User/Logout">Logout</a>
-        <a href="/Product2/New">Products-AJAX</a>
-    </div>
-
     <h1> Welcome @WebPrac.Security.SessionManager.User.Name</h1>
     <span style="color:red">@TempData["Message"]</span>
     <div>

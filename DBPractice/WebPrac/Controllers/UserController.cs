@@ -38,7 +38,12 @@ namespace WebPrac.Controllers
         [HttpGet]
         public ActionResult SignUp()
         {
-            return View();
+            UserDTO usr=(UserDTO) Session["user"];
+            if (usr != null) //edit request
+                Session["editUsrPicName"] = usr.PictureName;
+            else
+                usr = new UserDTO ();
+            return View(usr);
         }
 
         [HttpPost]
@@ -52,7 +57,6 @@ namespace WebPrac.Controllers
 
                 //Generate a unique name using Guid
                 uniqName = Guid.NewGuid () + ext;
-
                 //Getting physical Location where We have to save picture
                 var rootPath = Server.MapPath ( "~/userpics" );
 
@@ -60,25 +64,39 @@ namespace WebPrac.Controllers
 
                 //Save the uploaded image
                 file.SaveAs ( fileSavePath );
+            }
+            else if(Session["user"]!=null)
+            {
+                UserDTO usr = (UserDTO)Session["user"];
+                uniqName =usr.PictureName;
+            }
+                
                 // System.IO.File.Copy(uniqName,rootPath);
                 user.PictureName = uniqName;
+            
                 user.IsAdmin = false;
                 user.IsActive = true;
                 int rv = PMS.BAL.UserBO.Save ( user ); //rv contain id of user
-                if (rv > 0)
-                {
-                    Session["NewUserName"] = user.Name;
-                    Session["LoginUsrID"] = rv;
-                    TempData["msg"] = "Record is saved successfully!";
-                    Session["PictureName"] = user.PictureName;
-                    ViewBag.usr = user;
-                    return View ( "UserWelcome" ,user );//It will change url as well
-                                                                //  return View("UserHome");
-                }
+            user.UserID = rv;
+            if (rv > 0) //When new user is saved.
+            {
+                Session["NewUserName"] = user.Name;
+                Session["LoginUsrID"] = rv;
+                TempData["msg"] = "Record is saved successfully!";
+                Session["PictureName"] = user.PictureName;
+                ViewBag.usr = user;
+                Session["user"] = user;
+                return View ( "UserWelcome", user );
             }
-
-            return View ( "Error" );
-        }
+            else if (rv == -1)//When record is updated
+            {
+                TempData["msg"] = "Record is Updated successfully!";
+                user.PictureName = Session["editUsrPicName"].ToString();
+                return View ( "UserWelcome", user );
+            }
+            else
+                return View ( "Error" );
+           }
 
 
         public ActionResult UserWelcome()
@@ -103,7 +121,6 @@ namespace WebPrac.Controllers
         [HttpPost]
         public JsonResult ValidateUser(String login, String password)
         {
-
             Object data = null;
 
             try
