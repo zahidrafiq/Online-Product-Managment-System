@@ -40,6 +40,12 @@ namespace WebPrac.Controllers
             return View(products);
         }
 
+        public ActionResult CommentUser(int id)
+        {
+          //  UserDTO user=PMS.BAL.UserBO.GetUserById ( id );
+            return Redirect( Url.Content( "~/User/UserWelcome/"+id ) );
+        }
+
         public ActionResult New()
         {
             var redVal = GetUrlToRedirect();

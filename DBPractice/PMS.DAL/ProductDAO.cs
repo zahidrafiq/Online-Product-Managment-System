@@ -53,7 +53,7 @@ namespace PMS.DAL
 
         public static List<ProductDTO> GetAllProducts(Boolean pLoadComments=false)
         {
-            var query = "Select * from dbo.Products Where IsActive = 1;";
+            var query = "Select dbo.Products.ProductID, dbo.Products.Name, dbo.Products.Price, dbo.Products.PictureName, CreatedOn,CreatedBy, ModifiedOn, ModifiedBy, dbo.Products.IsActive,dbo.Users.Name from dbo.Products,dbo.Users Where dbo.Products.IsActive = 1 AND CreatedBy=dbo.Users.UserID;";
 
             using (DBHelper helper = new DBHelper())
             {
@@ -63,6 +63,7 @@ namespace PMS.DAL
                 while (reader.Read())
                 {
                     var dto = FillDTO(reader);
+                    dto.createrName = reader.GetValue ( 9 ).ToString();
                     if (dto != null)
                     {
                         list.Add(dto);
