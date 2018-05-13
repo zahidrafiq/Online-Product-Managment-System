@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Web;
 using System.Web.Mvc;
 using WebPrac.Security;
@@ -34,6 +36,17 @@ namespace WebPrac.Controllers
 
             return View();
         }
+
+        //public ActionResult Logout ()
+        //{
+        //    Session["LoginUsrID"] = null;
+        //    Session["NewUserName"] = null;
+        //    Session["adminID"] = null;
+        //    Session["PictureName"] = null;            
+        //    Session["user"] = null;
+        //    Session["editUsrPicName"] = null;
+        //    return Redirect ( "~/Home/Index" );
+        //}
 
         [HttpGet]
         public ActionResult SignUp()
@@ -101,14 +114,17 @@ namespace WebPrac.Controllers
 
         public ActionResult UserWelcome()
         {
-            return View ();
+            if (Session["user"] == null)
+                return Redirect ( "~/Home/Index" );
+            else
+                return View ();
         }
 
         [HttpGet]
         public ActionResult Logout()
         {
             SessionManager.ClearSession();
-            return RedirectToAction("Login");
+            return Redirect("/Home/Index");
         }
 
 
@@ -156,6 +172,93 @@ namespace WebPrac.Controllers
             }
 
             return Json(data, JsonRequestBehavior.AllowGet);
+        }//end of valdateUser()
+         //////////////////////////////////////////////////////
+        [HttpPost]
+        public ActionResult ResetPassword ( String Login, String Email )
+        {
+            Random random = new Random ();
+            //   int num = random.Next ( 1000, 9999 );
+            int num = 1234;
+            String body = num.ToString ();
+            Session["code"] = body;
+            UserDTO usr = PMS.BAL.UserBO.getUserByLoginEmail ( Login, Email );
+            if (usr == null)
+            {
+                ViewBag.msg2 = "Record Not Found Against this Email and Login!";
+                return View ( "UserLogin" );
+            }
+            Session["PasswdUpdateId"] = usr.UserID;
+            if (usr.Email.Equals ( Email ))
+            {
+                Boolean rv = SendEmail ( usr.Email, "Mail To Reset Password", body );
+                if (rv)
+                    return View ();
+
+            }
+            return View ();
+        }//End of ResetPassword
+
+        public static Boolean SendEmail ( String toEmailAddress, String subject, String body )
+        {
+            try
+            {
+                String fromDisplayEmail = "ead.csf15@gmail.com";
+                String fromPassword = "EAD_csf15m";
+                String fromDisplayName = "GUA Admin";
+                MailAddress fromAddress = new MailAddress ( fromDisplayEmail, fromDisplayName );
+
+                MailAddress toAddress = new MailAddress ( toEmailAddress );
+                System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient
+                {
+                    Host = "smtp.gmail.com",
+                    Port = 587,
+                    EnableSsl = true,
+                    DeliveryMethod = System.Net.Mail.SmtpDeliveryMethod.Network,
+                    UseDefaultCredentials = false,
+                    Credentials = new NetworkCredential ( fromAddress.Address, fromPassword )
+                };
+
+                using (var message = new MailMessage ( fromAddress, toAddress )
+                {
+                    Subject = subject,
+                    Body = body
+                })
+                {
+                    smtp.Send ( message );
+                }
+                return true;
+            }
+            catch (Exception exp)
+            {
+
+                return false;
+            }
         }
-	}
+
+        public ActionResult verifyResetCode ()
+        {
+            String enteredCode = Request["txtCode"];
+            String sendCode = Session["code"].ToString ();
+
+            if (enteredCode.Equals ( sendCode ))
+            {
+                return View ( "NewPassword" );
+            }
+            return View ( "ResetPassword" );
+        }
+
+        public ActionResult UpdatePassword ( String txtNewPassword )
+        {
+            int usrID = Convert.ToInt32(Session["PasswdUpdateId"]);
+            UserDTO usr = PMS.BAL.UserBO.GetUserById ( usrID );
+            Session["PasswdUpdateId"] = null;
+            usr.Password = txtNewPassword;
+            PMS.BAL.UserBO.UpdatePassword ( usr ); //It will Update User.
+            Session["code"] = null;
+            ViewBag.msg = "PassWord is Updated Successfully";
+            return View ( "UserWelcome",usr  );
+        }
+
+    }//end of class
 }

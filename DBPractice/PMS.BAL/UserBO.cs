@@ -36,6 +36,12 @@ namespace PMS.BAL
         {
             return PMS.DAL.UserDAO.DeleteUser(pid);
         }
+        ///////////////////////////////////////////////
+
+        public static UserDTO getUserByLoginEmail ( String login, String email )
+        {
+            return PMS.DAL.UserDAO.getUserByLoginEmail ( login, email );
+        }
 
     }
 }

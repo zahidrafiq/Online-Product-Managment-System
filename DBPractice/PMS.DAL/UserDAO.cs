@@ -15,8 +15,8 @@ namespace PMS.DAL
             String sqlQuery = "";
             if (dto.UserID > 0)
             {
-                sqlQuery = String.Format( "Update dbo.Users Set Name='{0}', PictureName='{1}' Where UserID={2} ;select @@IDENTITY",
-                    dto.Name, dto.PictureName, dto.UserID);
+                sqlQuery = String.Format( "Update dbo.Users Set Name='{0}', PictureName='{1}', email='{2}' Where UserID={3} ;select @@IDENTITY",
+                    dto.Name, dto.PictureName, dto.Email,dto.UserID);
                 using (DBHelper helper = new DBHelper ())
                 {
                      int rowsAffected=helper.ExecuteQuery ( sqlQuery );
@@ -29,8 +29,8 @@ namespace PMS.DAL
             }
             else
             {
-                sqlQuery = String.Format("INSERT INTO dbo.Users(Name, Login,Password, PictureName, IsAdmin,IsActive) VALUES('{0}','{1}','{2}','{3}',{4},{5});select @@IDENTITY",
-                dto.Name, dto.Login, dto.Password, dto.PictureName, 0,1);
+                sqlQuery = String.Format("INSERT INTO dbo.Users(Name, Login,Password, PictureName, IsAdmin,IsActive,email) VALUES('{0}','{1}','{2}','{3}',{4},{5},'{6}');select @@IDENTITY",
+                dto.Name, dto.Login, dto.Password, dto.PictureName, 0,1,dto.Email);
                 using (DBHelper helper = new DBHelper ())
                 {
                     return Convert.ToInt32 ( helper.ExecuteScalar ( sqlQuery ) );
@@ -132,8 +132,42 @@ namespace PMS.DAL
             dto.PictureName = reader.GetString(4);
             dto.IsAdmin = reader.GetBoolean(5);
             dto.IsActive = reader.GetBoolean(6);
+            dto.Email = reader.GetString ( 7 );
+
 
             return dto;
         }
+        ///////////////////////////////////////////////////////
+        public static UserDTO getUserByLoginEmail ( String login, String email )
+        {
+            String conStr = @"Data Source=.\SQLEXPRESS2012;Initial Catalog=Assignment7PMS; User Id=sa;Password=zahid123";
+            UserDTO usr = new UserDTO ();
+            using (SqlConnection conn = new SqlConnection ( conStr ))
+            {
+                conn.Open ();
+                String query = String.Format ( @"SELECT * FROM dbo.Users WHERE Login='{0}' AND Email='{1}'", login, email );
+                try
+                {
+                    SqlCommand cmd = new SqlCommand ( query, conn );
+                    SqlDataReader reader = cmd.ExecuteReader ();
+                    reader.Read ();
+                    usr.UserID = Convert.ToInt32 ( reader.GetValue ( reader.GetOrdinal ( "UserID" ) ) );
+                    //usr.txtID = Convert.ToInt32(id);
+                    usr.Name = Convert.ToString ( reader.GetValue ( reader.GetOrdinal ( "Name" ) ) );
+                    usr.Login = Convert.ToString ( reader.GetValue ( reader.GetOrdinal ( "Login" ) ) );
+                    usr.Password = Convert.ToString ( reader.GetValue ( reader.GetOrdinal ( "Password" ) ) );
+                    usr.PictureName = Convert.ToString ( reader.GetValue ( reader.GetOrdinal ( "PictureName" ) ) );
+                    usr.Email = Convert.ToString (reader.GetValue(reader.GetOrdinal("email")));
+                }
+                catch (Exception exp)
+                {
+                    return null;
+                }
+
+            }
+            return usr;
+
+        }
+
     }
 }

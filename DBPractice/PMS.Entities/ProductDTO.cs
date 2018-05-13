@@ -18,7 +18,7 @@ namespace PMS.Entities
         public DateTime ModifiedOn { get; set; }
         public int ModifiedBy { get; set; }
         public Boolean IsActive { get; set; }
-
+        public String createrName;
         public List<CommentDTO> Comments
         {
             get;
