@@ -112,12 +112,13 @@ namespace WebPrac.Controllers
            }
 
 
-        public ActionResult UserWelcome(int id=0)
+        public ActionResult UserWelcome()
         {
             if (Session["user"] == null)
                 return Redirect ( "~/Home/Index" );
             else
             {
+                int id = Convert.ToInt32(Session["uidFromComment"]);
                 UserDTO usr = PMS.BAL.UserBO.GetUserById ( id );
                 if (usr == null) 
                     usr = new UserDTO ();

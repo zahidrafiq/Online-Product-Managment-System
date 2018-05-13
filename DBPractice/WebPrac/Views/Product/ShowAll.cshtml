@@ -64,12 +64,14 @@
                     Created On @item.CreatedOn <b>By</b> @item.createrName
                 </div>
                 <div style="clear:both">
-                    @if (WebPrac.Security.SessionManager.User.IsAdmin)
+                    
+                    @if (WebPrac.Security.SessionManager.User.IsAdmin || (WebPrac.Security.SessionManager.IsValidUser && item.CreatedBy==ViewBag.uid))
                     {
                         <a href='@Url.Content("~/Product/Edit/" + @item.ProductID)'>Edit</a>
                         <a href='@Url.Content("~/Product/Delete/" + @item.ProductID)'>Delete</a>
-                        <input type="submit" value="Edit" class="editbutton" pid="@item.ProductID" />
+                        @*<input type="submit" value="Edit" class="editbutton" pid="@item.ProductID" />*@
                     }
+
                 </div>
                 <div class="commentarea">
                     <textarea class="txtComment" id="txtComment" rows="1" cols="50"></textarea>
@@ -85,7 +87,7 @@
                                 <img src='@Url.Content("~/UploadedFiles/" + comment.PictureName)' />
                             </div>
                             <div>
-                                <span class="name"><a href="CommentUser/@comment.UserID">@comment.UserName</a></span>
+                                <span class="name"><a href="CommentUser/@comment.UserID" target="_blank">@comment.UserName</a></span>
                                 <span class="comment-text">@comment.CommentText</span> <br />
                                 <span class="comment-text">@comment.CommentOn</span>
 

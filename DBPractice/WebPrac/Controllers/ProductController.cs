@@ -36,14 +36,16 @@ namespace WebPrac.Controllers
             }
 
             var products = PMS.BAL.ProductBO.GetAllProducts(true);
-
+            UserDTO usr = (UserDTO)Session["user"];
+            ViewBag.uid = usr.UserID;
             return View(products);
         }
 
         public ActionResult CommentUser(int id)
         {
-          //  UserDTO user=PMS.BAL.UserBO.GetUserById ( id );
-            return Redirect( Url.Content( "~/User/UserWelcome/"+id ) );
+            //  UserDTO user=PMS.BAL.UserBO.GetUserById ( id );
+            Session["uidFromComment"]=id;
+            return Redirect( Url.Content( "~/User/UserWelcome" ) );
         }
 
         public ActionResult New()
@@ -54,7 +56,8 @@ namespace WebPrac.Controllers
                 var dto = new ProductDTO();
                 redVal =  View(dto);
             }
-
+           UserDTO usr=(UserDTO) Session["user"];
+            ViewBag.CreaterID = usr.UserID;
             return redVal;
         }
 
@@ -95,6 +98,7 @@ namespace WebPrac.Controllers
 
             PMS.BAL.ProductBO.DeleteProduct(id);
             TempData["Msg"] = "Record is deleted!";
+
             return RedirectToAction("ShowAll");
         }
         [HttpPost]
@@ -150,7 +154,7 @@ namespace WebPrac.Controllers
             else
             {
                 dto.CreatedOn = DateTime.Now;
-                dto.CreatedBy = 1;
+                dto.CreatedBy = ViewBag.CreaterID;
             }
 
             PMS.BAL.ProductBO.Save(dto);
