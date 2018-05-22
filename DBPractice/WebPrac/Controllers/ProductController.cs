@@ -50,76 +50,77 @@ namespace WebPrac.Controllers
 
         public ActionResult New()
         {
-            var redVal = GetUrlToRedirect();
+            ActionResult redVal=null;
+            if (SessionManager.IsValidUser == false)
+            {
+                TempData["Message"] = "Unauthorized Access";
+                redVal =Redirect("~/User/Login");
+            }
             if (redVal == null)
             {
                 var dto = new ProductDTO();
                 redVal =  View(dto);
             }
            UserDTO usr=(UserDTO) Session["user"];
-            ViewBag.CreaterID = usr.UserID;
             return redVal;
         }
 
         public ActionResult Edit(int id)
         {
-
-            var redVal = GetUrlToRedirect();
-            if (redVal == null)
+            if (SessionManager.IsValidUser)
             {
-                var prod = PMS.BAL.ProductBO.GetProductById(id);
-                redVal= View("New", prod);
+                ProductDTO prod = PMS.BAL.ProductBO.GetProductById ( id );
+                if (prod!=null && (SessionManager.User.IsAdmin || SessionManager.User.UserID == prod.CreatedBy))
+                    return View ( "New", prod );
             }
-
-            return redVal;
-            
+                TempData["Message"] = "Unauthorized Access";
+                return Redirect ( "~/User/Logout" );
         }
+
+
         public ActionResult Edit2(int ProductID)
         {
             var prod = PMS.BAL.ProductBO.GetProductById(ProductID);
             return View("New", prod);
         }
+
+//        public ActionResult Comment(String id)
+  //      {
+
+    //    }
+
         public ActionResult Delete(int id)
         {
 
             if (SessionManager.IsValidUser)
             {
-
-                if (SessionManager.User.IsAdmin == false)
+               ProductDTO dto= PMS.BAL.ProductBO.GetProductById ( id );
+                if(dto == null)
                 {
-                    TempData["Message"] = "Unauthorized Access";
-                    return Redirect("~/Home/NormalUser");
+                    return Redirect ( "~/Home/NormalUser" );
+                }
+                if (SessionManager.User.IsAdmin == true || dto.CreatedBy ==SessionManager.User.UserID)
+                {
+                    PMS.BAL.ProductBO.DeleteProduct ( id );
+                    TempData["Msg"] = "Record is deleted!";
                 }
             }
             else
             {
                 return Redirect("~/User/Login");
             }
-
-            PMS.BAL.ProductBO.DeleteProduct(id);
-            TempData["Msg"] = "Record is deleted!";
-
-            return RedirectToAction("ShowAll");
+            return RedirectToAction ( "ShowAll" );
         }
         [HttpPost]
         public ActionResult Save(ProductDTO dto)
         {
 
-            if (SessionManager.IsValidUser)
+            if (!SessionManager.IsValidUser)
             {
-
-                if (SessionManager.User.IsAdmin == false)
-                {
-                    TempData["Message"] = "Unauthorized Access";
-                    return Redirect("~/Home/NormalUser");
-                }
+                TempData["Message"] = "Unauthorized Access";
+                return Redirect ( "~/User/Login" );
             }
-            else
-            {
-                return Redirect("~/User/Login");
-            }
-
-
+            
             var uniqueName = "";
 
             if (Request.Files["Image"] != null)
@@ -149,12 +150,12 @@ namespace WebPrac.Controllers
             if (dto.ProductID > 0)
             {
                 dto.ModifiedOn = DateTime.Now;
-                dto.ModifiedBy = 1;
+                dto.ModifiedBy = SessionManager.User.UserID;
             }
             else
             {
                 dto.CreatedOn = DateTime.Now;
-                dto.CreatedBy = ViewBag.CreaterID;
+                dto.CreatedBy = SessionManager.User.UserID;
             }
 
             PMS.BAL.ProductBO.Save(dto);

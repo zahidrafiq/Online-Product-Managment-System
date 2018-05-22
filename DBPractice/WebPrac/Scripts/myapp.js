@@ -41,7 +41,7 @@ MyApp = (function () {
 
                 var obj = {};
                 obj.data = [];
-                obj.data.push({ ProductID: r.ProductID, Name: name, Price: price, PictureName: r.PictureName });
+                obj.data.push({ ProductID: r.ProductID, Name: name, Price: price, PictureName: r.PictureName,CreaterName=r.CreaterName });
 
                 var source = $("#listtemplate").html();
                 var template = Handlebars.compile(source);

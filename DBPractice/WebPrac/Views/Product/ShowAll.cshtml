@@ -24,7 +24,7 @@
 
 <span>@TempData["Msg"]</span>
 
-<form action='@Url.Content("~/Product/Edit2")' method="post">
+<form action='@Url.Content("~/Product/Comment")' method="post">
     <input type="hidden" name="ProductID" id="ProductID" />
     @*<table>
             @foreach (var item in Model)
@@ -65,7 +65,7 @@
                 </div>
                 <div style="clear:both">
                     
-                    @if (WebPrac.Security.SessionManager.User.IsAdmin || (WebPrac.Security.SessionManager.IsValidUser && item.CreatedBy==ViewBag.uid))
+                    @if (WebPrac.Security.SessionManager.User.IsAdmin || (WebPrac.Security.SessionManager.IsValidUser && item.CreatedBy==WebPrac.Security.SessionManager.User.UserID))
                     {
                         <a href='@Url.Content("~/Product/Edit/" + @item.ProductID)'>Edit</a>
                         <a href='@Url.Content("~/Product/Delete/" + @item.ProductID)'>Delete</a>

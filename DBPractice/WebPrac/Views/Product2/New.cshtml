@@ -26,6 +26,7 @@
     <img src="" style="width:100px;height:100px;display:none" id="prodimg" /> <br />
 
     <input type="hidden" name="ProductID" id="txtProductID" value="0" />
+    <input type="hidden" name="CreaterID" id="txtCreaterID" value="0" />
     <input type="hidden" name="PictureName" id="txtPictureName" />
     Name<input type="text" name="Name" id="txtName" /> <br />
     Price: <input type="text" name="Price" id="txtPrice" /> <br />
@@ -90,10 +91,10 @@
             Product Id: {{ProductID}} <br />
             Name: {{Name}} <br />
             Price: {{Price}} <br />
-            Created On {{CreatedOn}} <b>By</b> {{CreatedBy}}
+            Created On {{CreatedOn}} <b>By</b> {{CreaterName}}
         </div>
         <div style="clear:both">
-            @if (WebPrac.Security.SessionManager.User.IsAdmin)
+            @if (WebPrac.Security.SessionManager.User.IsAdmin )
             {
                 <a href="/Product/Edit/{{ProductID}}">Edit</a>
                 <a href="/Product/Delete/{{ProductID}}">Delete</a>

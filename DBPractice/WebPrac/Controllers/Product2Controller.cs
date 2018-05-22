@@ -83,7 +83,7 @@ namespace WebPrac.Controllers
             else
             {
                 dto.CreatedOn = DateTime.Now;
-                dto.CreatedBy = 1;
+                dto.CreatedBy = WebPrac.Security.SessionManager.User.UserID;
             }
 
             var pid = PMS.BAL.ProductBO.Save(dto);
@@ -92,6 +92,7 @@ namespace WebPrac.Controllers
             {
                 success = true,
                 ProductID = pid,
+                CreaterName = WebPrac.Security.SessionManager.User.Name,
                 PictureName = dto.PictureName
             };
             return Json(data, JsonRequestBehavior.AllowGet);
