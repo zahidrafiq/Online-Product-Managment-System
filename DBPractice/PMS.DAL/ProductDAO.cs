@@ -12,23 +12,70 @@ namespace PMS.DAL
     {
         public static int Save(ProductDTO dto)
         {
-            using (DBHelper helper = new DBHelper())
+            using (DBHelper helper = new DBHelper ())
             {
                 String sqlQuery = "";
                 if (dto.ProductID > 0)
                 {
-                    sqlQuery = String.Format("Update dbo.Products Set Name='{0}',Price='{1}',PictureName='{2}',ModifiedOn='{3}',ModifiedBy='{4}' Where ProductID={5}",
-                        dto.Name, dto.Price, dto.PictureName, dto.ModifiedOn, dto.ModifiedBy, dto.ProductID);
-                    helper.ExecuteQuery(sqlQuery);
+                    sqlQuery = String.Format ( "Update dbo.Products Set Name='{0}',Price='{1}',PictureName='{2}',ModifiedOn='{3}',ModifiedBy='{4}' Where ProductID={5}",
+                        dto.Name, dto.Price, dto.PictureName, dto.ModifiedOn, dto.ModifiedBy, dto.ProductID );
+                    helper.ExecuteQuery ( sqlQuery );
                     return dto.ProductID;
                 }
                 else
                 {
-                    sqlQuery = String.Format("INSERT INTO dbo.Products(Name, Price, PictureName, CreatedOn, CreatedBy,IsActive) VALUES('{0}','{1}','{2}','{3}','{4}',{5}); Select @@IDENTITY",
-                        dto.Name, dto.Price, dto.PictureName, dto.CreatedOn, dto.CreatedBy, 1);
+                    //sqlQuery = String.Format("INSERT INTO dbo.Products(Name, Price, PictureName, CreatedOn, CreatedBy,IsActive) VALUES('{0}','{1}','{2}','{3}','{4}',{5}); Select @@IDENTITY",
+                    //dto.Name, dto.Price, dto.PictureName, dto.CreatedOn, dto.CreatedBy, 1);
 
-                    var obj = helper.ExecuteScalar(sqlQuery);
-                    return Convert.ToInt32(obj);
+                    sqlQuery = String.Format ( @"INSERT INTO dbo.Products(Name, Price, PictureName, CreatedOn, CreatedBy,IsActive) VALUES
+                        (@name,@price,@picname,@createdon,@createdby,@isactive); Select @@IDENTITY",
+                       dto.Name, dto.Price, dto.PictureName, dto.CreatedOn, dto.CreatedBy, 1 );
+                    String _connStr = System.Configuration.ConfigurationManager.ConnectionStrings["MyConnString"].ConnectionString;
+                    SqlConnection conn = new SqlConnection ( _connStr );
+                    conn.Open ();
+                   
+                    SqlCommand cmd = new SqlCommand ( sqlQuery, conn );
+                  
+                    SqlParameter parm = new SqlParameter ();
+                    parm.ParameterName = "name";
+                    parm.SqlDbType = System.Data.SqlDbType.VarChar;
+                    parm.Value = dto.Name;
+                    cmd.Parameters.Add ( parm );
+
+                    parm = new SqlParameter ();
+                    parm.ParameterName = "price";
+                    parm.SqlDbType = System.Data.SqlDbType.Float;
+                    parm.Value = dto.Price;
+                    cmd.Parameters.Add ( parm );
+
+                    parm = new SqlParameter ();
+                    parm.ParameterName = "picname";
+                    parm.SqlDbType = System.Data.SqlDbType.VarChar;
+                    parm.Value = dto.PictureName;
+                    cmd.Parameters.Add ( parm );
+
+                    parm = new SqlParameter ();
+                    parm.ParameterName = "createdon";
+                    parm.SqlDbType = System.Data.SqlDbType.DateTime;
+                    parm.Value = dto.CreatedOn;
+                    cmd.Parameters.Add ( parm );
+
+                    parm = new SqlParameter ();
+                    parm.ParameterName = "createdby";
+                    parm.SqlDbType = System.Data.SqlDbType.Int;
+                    parm.Value = dto.CreatedBy;
+                    cmd.Parameters.Add ( parm );
+
+                    parm = new SqlParameter ();
+                    parm.ParameterName = "isactive";
+                    parm.SqlDbType = System.Data.SqlDbType.Bit;
+                    parm.Value = 1;
+                    cmd.Parameters.Add ( parm );
+
+                    int a = Convert.ToInt32 ( cmd.ExecuteScalar () );
+
+                    //int a= Convert.ToInt32(obj);
+                    return a;
                 }
             }
         }

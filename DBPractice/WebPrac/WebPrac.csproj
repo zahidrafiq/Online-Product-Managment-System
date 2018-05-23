@@ -181,7 +181,7 @@
     <Content Include="Views\User\UserWelcome.cshtml" />
     <Content Include="Views\User\ResetPassword.cshtml" />
     <Content Include="Views\User\NewPassword.cshtml" />
-    <Content Include="Views\User\UpdatePassword.cshtml" />
+    <Content Include="Views\User\UpdateLoginUserPassword.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PMS.BAL\PMS.BAL.csproj">

@@ -16,7 +16,10 @@ namespace PMS.DAL
             _conn = new SqlConnection(_connStr);
             _conn.Open();
         }
-
+        public DBHelper getConn()
+        {
+            return new DBHelper ();
+        }
         public int ExecuteQuery(String sqlQuery)
         {
             SqlCommand command = new SqlCommand(sqlQuery, _conn);

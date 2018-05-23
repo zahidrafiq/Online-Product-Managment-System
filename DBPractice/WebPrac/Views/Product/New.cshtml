@@ -1,22 +1,40 @@
 ﻿@model PMS.Entities.ProductDTO
 
 @{
-    ViewBag.Title = "New";
+   // ViewBag.Title = "New";
     Layout = "~/Views/Shared/_MyProductLayout.cshtml";
 }
-
+<script>
+    function validate(){
+        if($("#txtName").val()=="" || $("#txtPrice").val()==""){
+            alert("Please enter name and price");
+            return false;
+        }
+        else
+            return true;     
+    }
+</script>
 <h2>New</h2>
 
+<div class="formPos" style="width:368px;height:500px;border:5px solid black;background-color:antiquewhite;">
 <form action='@Url.Content("~/Product/Save")' method="post" enctype="multipart/form-data">
-    @if (Model.PictureName != "")
-    {
-        <img src='@Url.Content("~/UploadedFiles")/@Model.PictureName' style="width:100px;height:100px;" /> <br />
-    }
-    <input type="hidden" name="ProductID" value="@Model.ProductID" />
-    <input type="hidden" name="CreatedBy" value="@ViewBag.createrID" />
-    <input type="hidden" name="PictureName" value="@Model.PictureName" />
-    Name<input type="text" name="Name" value="@Model.Name" /> <br />
-    Price: <input type="text" name="Price" value="@Model.Price" /> <br />
-    Image: <input type="file" name="Image" />
-    <input type="submit" value="Save" />
+        <div class="chngBackgrnd" style="padding-left:27px;font-size:30px;text-align:center;width:360px;height:63px;">New Product</div><br>
+    <div style="padding-left:20%;">
+        @if (Model.PictureName != null)
+        {
+            <img src='@Url.Content("~/UploadedFiles")/@Model.PictureName' style="width:100px;height:100px;" /> <br />
+        }
+        <input type="hidden" name="ProductID" value="@Model.ProductID" />
+        <input type="hidden" name="CreatedBy" value="@ViewBag.createrID" />
+        <input type="hidden" name="PictureName" value="@Model.PictureName" />
+        <span><b>Name</b></span><br>
+        <input type="text" name="Name" id="txtName"value="@Model.Name" /> <br /><br />
+        <span><b>Price</b></span><br>
+        <input type="text" name="Price" id="txtPrice" value="@Model.Price" /> <br /><br />
+        <span><b>Image</b></span><br>
+        <input type="file" name="Image" /><br />
+        <input class="btn" type="submit" name="btnSave" id="btnSave" value="Save" style="width:30%;padding: 5px 8px;" onclick="return validate();">
+        <input class="btn" type="reset" name="btnCancel" id="btnCancel" value="Cancel" style="width :30%;padding:5px 8px;"><br><br><br>
+    </div>
 </form>
+</div>

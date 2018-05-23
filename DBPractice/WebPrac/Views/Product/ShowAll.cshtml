@@ -1,7 +1,7 @@
 ﻿@model List<PMS.Entities.ProductDTO>
 
 @{
-    ViewBag.Title = "ShowAll";
+   // ViewBag.Title = "ShowAll";
     Layout = "~/Views/Shared/_MyProductLayout.cshtml";
 }
 
@@ -14,18 +14,31 @@
                 $("#ProductID").val(pid);
             });
         });
-    </script>
+        function showMsg(){
+            if(confirm("Are You sure You Want To Delete Product"))
+                return true;
+            else
+                return false;
+        }
+
+        function validate()
+        {
+            if($("#txtComment").val()=="")
+                alert("ee");
+            else
+                alert("ff");
+        return false;
+        }
+
+         </script>
 
 }
 
 
-<h2>ShowAll</h2>
 
 
 <span>@TempData["Msg"]</span>
 
-<form action='@Url.Content("~/Product/Comment")' method="post">
-    <input type="hidden" name="ProductID" id="ProductID" />
     @*<table>
             @foreach (var item in Model)
             {
@@ -50,55 +63,58 @@
         </table>*@
 
 
-    <div>
+    <div >
         @foreach (var item in Model)
         {
-            <div class="prodbox">
-                <div style="float:left">
-                    <img src="/UploadedFiles/@item.PictureName" style="width:100px;height:100px;" />
-                </div>
-                <div style="float:left">
-                    Product Id: @item.ProductID <br />
-                    Name: @item.Name <br />
-                    Price: @item.Price <br />
-                    Created On @item.CreatedOn <b>By</b> @item.createrName
-                </div>
-                <div style="clear:both">
-                    
-                    @if (WebPrac.Security.SessionManager.User.IsAdmin || (WebPrac.Security.SessionManager.IsValidUser && item.CreatedBy==WebPrac.Security.SessionManager.User.UserID))
-                    {
-                        <a href='@Url.Content("~/Product/Edit/" + @item.ProductID)'>Edit</a>
-                        <a href='@Url.Content("~/Product/Delete/" + @item.ProductID)'>Delete</a>
-                        @*<input type="submit" value="Edit" class="editbutton" pid="@item.ProductID" />*@
-                    }
 
-                </div>
-                <div class="commentarea">
-                    <textarea class="txtComment" id="txtComment" rows="1" cols="50"></textarea>
-                    <button id="btnAddComment" value="Add">Add</button>
-                </div>
-                <br />
-                <div class="comments">
+            <form action='@Url.Content("~/Product/Comment")' method="get">
+                <input type="hidden" name="ProductID" id="ProductID" value="@item.ProductID" />
+                <div class="prodbox">
+                    <div style="float:left">
+                        <img src="/UploadedFiles/@item.PictureName" style="width:100px;height:100px;" />
+                    </div>
+                    <div style="float:left">
+                        <span class="pid">Id: @item.ProductID </span><br />
+                        Name: @item.Name <br />
+                        Price: @item.Price <br />
+                        Created On @item.CreatedOn <b>By</b> @item.createrName
+                    </div>
+                    <div style="clear:both">
 
-                    @foreach (var comment in item.Comments)
-                    {
-                        <div class="comment">
-                            <div class="picture">
-                                <img src='@Url.Content("~/UploadedFiles/" + comment.PictureName)' />
+                        @if (WebPrac.Security.SessionManager.User.IsAdmin || (WebPrac.Security.SessionManager.IsValidUser && item.CreatedBy == WebPrac.Security.SessionManager.User.UserID))
+                        {
+                            <a href='@Url.Content("~/Product/Edit/" + @item.ProductID)' class="btn" style="width:auto;margin:unset;">Edit</a>
+                            <a href='@Url.Content("~/Product/Delete/" + @item.ProductID)' onclick='return showMsg();' class="btn" style="width:auto;background-color:red;margin:unset;">Delete</a>
+                            @*<input type="submit" value="Edit" class="editbutton" pid="@item.ProductID" />*@
+                        }
+                    </div>
+                    <div class="commentarea">
+                        <table><tr><td>
+                        <textarea class="txtComment" id="txtComment" name="txtComment" rows="1" cols="50" placeholder="Comments"></textarea>
+                        </td><td>
+                        <input type="submit" class="btn" id="btnAddComment" value="Add" style="height:27px;width:100%;padding:unset;background-color:mediumblue;" />
+                        </td></tr></table> 
+                   </div>
+                    <br />
+                    <div class="comments">
+                        @foreach (var comment in item.Comments)
+                        {
+                            <div class="comment">
+                                <div class="picture">
+                                    <img src="/userpics/@comment.PictureName" style="width:50px;height:50px;" />
+                                </div>
+                                <div>
+                                    <span class="name"><a href="CommentUser/@comment.UserID" target="_blank">@comment.UserName</a></span>
+                                    <span class="comment-text">@comment.CommentText</span> <br />
+                                    <span class="comment-text">@comment.CommentOn</span>
+                                </div>
                             </div>
-                            <div>
-                                <span class="name"><a href="CommentUser/@comment.UserID" target="_blank">@comment.UserName</a></span>
-                                <span class="comment-text">@comment.CommentText</span> <br />
-                                <span class="comment-text">@comment.CommentOn</span>
-
-                            </div>
-                        </div>
-                        <br />
-                        <div style="clear:both"></div>
-                    }
+                            <br />
+                            <div style="clear:both"></div>
+                        }
+                    </div>
                 </div>
-            </div>
-        }
-    </div>
-</form>
+            </form> }
+</div>
+
 

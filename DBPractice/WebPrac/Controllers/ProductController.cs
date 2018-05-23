@@ -84,10 +84,20 @@ namespace WebPrac.Controllers
             return View("New", prod);
         }
 
-//        public ActionResult Comment(String id)
-  //      {
-
-    //    }
+        public ActionResult Comment (String ProductId ,String txtComment )
+        {if (!(SessionManager.IsValidUser))
+            {
+                TempData["Message"] = "Unauthorized Access";
+                return Redirect ( Url.Content ( "~/User/Login" ) );
+            }
+            CommentDTO cmnt = new CommentDTO ();
+            cmnt.UserID = SessionManager.User.UserID;
+            cmnt.ProductID = Convert.ToInt32(ProductId);
+            cmnt.CommentText = txtComment;
+            cmnt.CommentOn = DateTime.Now;
+            PMS.BAL.CommentBO.Save ( cmnt );
+            return Redirect(Url.Content("~/Product/ShowAll"));
+        }
 
         public ActionResult Delete(int id)
         {
@@ -101,7 +111,7 @@ namespace WebPrac.Controllers
                 }
                 if (SessionManager.User.IsAdmin == true || dto.CreatedBy ==SessionManager.User.UserID)
                 {
-                    PMS.BAL.ProductBO.DeleteProduct ( id );
+                   // PMS.BAL.ProductBO.DeleteProduct ( id );
                     TempData["Msg"] = "Record is deleted!";
                 }
             }

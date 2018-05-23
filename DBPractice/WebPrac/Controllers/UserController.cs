@@ -140,9 +140,19 @@ namespace WebPrac.Controllers
             return View();
         }
 
+        [HttpGet]
+        public ActionResult UpdateLoginUserPassword()
+        {
+            return View ();
+        }
+
         [HttpPost]
         public JsonResult ValidateUser(String login, String password)
         {
+
+            if (login == null && (SessionManager.User!=null))//It is user for validation of old passwd on update password request.
+                login = SessionManager.User.Login;
+
             Object data = null;
 
             try
@@ -253,15 +263,24 @@ namespace WebPrac.Controllers
             }
             return View ( "ResetPassword" );
         }
-
+        
         public ActionResult UpdatePassword ( String txtNewPassword )
         {
-            int usrID = Convert.ToInt32(Session["PasswdUpdateId"]);
-            UserDTO usr = PMS.BAL.UserBO.GetUserById ( usrID );
-            Session["PasswdUpdateId"] = null;
+            UserDTO usr = null;
+            if (txtNewPassword == null)//When Password is changing for login user and redirected from UpdateLoginUserPassword Form.
+            {
+                txtNewPassword = Request["pwd"];
+                usr = SessionManager.User;
+            }
+            else
+            {
+                int usrID = Convert.ToInt32 ( Session["PasswdUpdateId"] );
+                usr = PMS.BAL.UserBO.GetUserById ( usrID );
+                Session["PasswdUpdateId"] = null;
+            }
             usr.Password = txtNewPassword;
             PMS.BAL.UserBO.UpdatePassword ( usr ); //It will Update User.
-            Session["code"] = null;
+            Session["code"] = null; //reset code sent to user.
             ViewBag.msg = "PassWord is Updated Successfully";
             return View ( "UserWelcome",usr  );
         }
