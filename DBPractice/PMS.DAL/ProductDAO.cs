@@ -17,9 +17,49 @@ namespace PMS.DAL
                 String sqlQuery = "";
                 if (dto.ProductID > 0)
                 {
-                    sqlQuery = String.Format ( "Update dbo.Products Set Name='{0}',Price='{1}',PictureName='{2}',ModifiedOn='{3}',ModifiedBy='{4}' Where ProductID={5}",
-                        dto.Name, dto.Price, dto.PictureName, dto.ModifiedOn, dto.ModifiedBy, dto.ProductID );
-                    helper.ExecuteQuery ( sqlQuery );
+//                    sqlQuery = String.Format ( "Update dbo.Products Set Name='{0}',Price='{1}',PictureName='{2}',ModifiedOn='{3}',ModifiedBy='{4}' Where ProductID={5}",
+  //                      dto.Name, dto.Price, dto.PictureName, dto.ModifiedOn, dto.ModifiedBy, dto.ProductID );
+
+                    sqlQuery = String.Format ( @"Update dbo.Products Set Name=@name,Price=@price,PictureName=@picname,ModifiedOn=@modifiedon,ModifiedBy=@modifiedby Where ProductID=@pid");
+                    SqlCommand cmd = new SqlCommand ( sqlQuery );
+                    //cmd.Connection = conn;
+                    SqlParameter parm = new SqlParameter ();
+                    parm.ParameterName = "name";
+                    parm.SqlDbType = System.Data.SqlDbType.VarChar;
+                    parm.Value = dto.Name;
+                    cmd.Parameters.Add ( parm );
+
+                    parm = new SqlParameter ();
+                    parm.ParameterName = "price";
+                    parm.SqlDbType = System.Data.SqlDbType.Float;
+                    parm.Value = dto.Price;
+                    cmd.Parameters.Add ( parm );
+
+                    parm = new SqlParameter ();
+                    parm.ParameterName = "picname";
+                    parm.SqlDbType = System.Data.SqlDbType.VarChar;
+                    parm.Value = dto.PictureName;
+                    cmd.Parameters.Add ( parm );
+
+                    parm = new SqlParameter ();
+                    parm.ParameterName = "modifiedon";
+                    parm.SqlDbType = System.Data.SqlDbType.DateTime;
+                    parm.Value = dto.ModifiedOn;
+                    cmd.Parameters.Add ( parm );
+
+                    parm = new SqlParameter ();
+                    parm.ParameterName = "modifiedby";
+                    parm.SqlDbType = System.Data.SqlDbType.Int;
+                    parm.Value = dto.ModifiedBy;
+                    cmd.Parameters.Add ( parm );
+
+                    parm = new SqlParameter ();
+                    parm.ParameterName = "pid";
+                    parm.SqlDbType = System.Data.SqlDbType.Int;
+                    parm.Value = dto.ProductID;
+                    cmd.Parameters.Add ( parm );
+
+                   int a= helper.ExecuteQueryParm ( cmd );
                     return dto.ProductID;
                 }
                 else
@@ -28,14 +68,13 @@ namespace PMS.DAL
                     //dto.Name, dto.Price, dto.PictureName, dto.CreatedOn, dto.CreatedBy, 1);
 
                     sqlQuery = String.Format ( @"INSERT INTO dbo.Products(Name, Price, PictureName, CreatedOn, CreatedBy,IsActive) VALUES
-                        (@name,@price,@picname,@createdon,@createdby,@isactive); Select @@IDENTITY",
-                       dto.Name, dto.Price, dto.PictureName, dto.CreatedOn, dto.CreatedBy, 1 );
-                    String _connStr = System.Configuration.ConfigurationManager.ConnectionStrings["MyConnString"].ConnectionString;
-                    SqlConnection conn = new SqlConnection ( _connStr );
-                    conn.Open ();
+                        (@name,@price,@picname,@createdon,@createdby,@isactive); Select @@IDENTITY");
+                  //  String _connStr = System.Configuration.ConfigurationManager.ConnectionStrings["MyConnString"].ConnectionString;
+                    //SqlConnection conn = new SqlConnection ( _connStr );
+                    //conn.Open ();
                    
-                    SqlCommand cmd = new SqlCommand ( sqlQuery, conn );
-                  
+                    SqlCommand cmd = new SqlCommand ( sqlQuery );
+                    //cmd.Connection = conn;
                     SqlParameter parm = new SqlParameter ();
                     parm.ParameterName = "name";
                     parm.SqlDbType = System.Data.SqlDbType.VarChar;
@@ -72,9 +111,9 @@ namespace PMS.DAL
                     parm.Value = 1;
                     cmd.Parameters.Add ( parm );
 
-                    int a = Convert.ToInt32 ( cmd.ExecuteScalar () );
-
-                    //int a= Convert.ToInt32(obj);
+                    //int a = Convert.ToInt32 ( cmd.ExecuteScalar () );
+                   Object obj= helper.ExecuteScalarParm ( cmd );
+                    int a= Convert.ToInt32(obj);
                     return a;
                 }
             }
@@ -134,7 +173,7 @@ namespace PMS.DAL
 
         public static int DeleteProduct(int pid)
         {
-            String sqlQuery = String.Format("Update dbo.Products Set IsActive=0 Where ProductID={0}", pid);
+            String sqlQuery = String.Format(@"Update dbo.Products Set IsActive=0 Where ProductID={0}", pid);
 
             using (DBHelper helper = new DBHelper())
             {

@@ -111,7 +111,7 @@ namespace WebPrac.Controllers
                 }
                 if (SessionManager.User.IsAdmin == true || dto.CreatedBy ==SessionManager.User.UserID)
                 {
-                   // PMS.BAL.ProductBO.DeleteProduct ( id );
+                    PMS.BAL.ProductBO.DeleteProduct ( id );
                     TempData["Msg"] = "Record is deleted!";
                 }
             }

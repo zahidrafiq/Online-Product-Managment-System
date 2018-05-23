@@ -194,15 +194,16 @@ namespace WebPrac.Controllers
         public ActionResult ResetPassword ( String Login, String Email )
         {
             Random random = new Random ();
-            //   int num = random.Next ( 1000, 9999 );
-            int num = 1234;
+            int num = random.Next ( 1000, 9999 );
+            //int num = 1234;
             String body = num.ToString ();
             Session["code"] = body;
             UserDTO usr = PMS.BAL.UserBO.getUserByLoginEmail ( Login, Email );
             if (usr == null)
             {
-                ViewBag.msg2 = "Record Not Found Against this Email and Login!";
-                return View ( "UserLogin" );
+                ViewBag.msgRecNotFound = "Record Not Found Against this Email and Login!";
+                ViewBag.login = Login;
+                return View ( "Login" );
             }
             Session["PasswdUpdateId"] = usr.UserID;
             if (usr.Email.Equals ( Email ))
@@ -212,7 +213,8 @@ namespace WebPrac.Controllers
                     return View ();
 
             }
-            return View ();
+            ViewBag.msgEmailFailed = "There is some problem in sending email";
+            return View ("Login");
         }//End of ResetPassword
 
         public static Boolean SendEmail ( String toEmailAddress, String subject, String body )
@@ -261,6 +263,7 @@ namespace WebPrac.Controllers
             {
                 return View ( "NewPassword" );
             }
+            ViewBag.msg = "Incorrect code";
             return View ( "ResetPassword" );
         }
         

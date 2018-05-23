@@ -54,11 +54,26 @@ namespace PMS.DAL
 
         public static UserDTO ValidateUser(String pLogin, String pPassword)
         {
-            var query = String.Format("Select * from dbo.Users Where Login='{0}' and Password='{1}'", pLogin, pPassword);
+            var query = String.Format(@"Select * from dbo.Users Where Login=@login and Password=@pwd");
+            SqlCommand cmd = new SqlCommand ( query );
+
+            SqlParameter parm = new SqlParameter ();
+            parm.ParameterName = "login";
+            parm.SqlDbType = System.Data.SqlDbType.VarChar;
+            parm.Value = pLogin;
+            cmd.Parameters.Add ( parm );
+
+            //            parm = new SqlParameter ( "pwd", System.Data.SqlDbType.VarChar );
+            parm = new SqlParameter ();
+            parm.ParameterName = "pwd";
+            parm.SqlDbType = System.Data.SqlDbType.VarChar;
+            parm.Value = pPassword;
+            cmd.Parameters.Add ( parm );
+
 
             using (DBHelper helper = new DBHelper())
             {
-                var reader = helper.ExecuteReader(query);
+                var reader = helper.ExecuteReaderParm(cmd);
 
                 UserDTO dto = null;
 

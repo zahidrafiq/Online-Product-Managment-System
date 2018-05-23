@@ -26,16 +26,37 @@ namespace PMS.DAL
             var count = command.ExecuteNonQuery();
             return count;
         }
+
+        public int ExecuteQueryParm ( SqlCommand command )
+        {
+            command.Connection = _conn;
+            var count = command.ExecuteNonQuery ();
+            return count;
+        }
         public Object ExecuteScalar(String sqlQuery)
         {
             SqlCommand command = new SqlCommand(sqlQuery, _conn);
             return command.ExecuteScalar();
         }
 
+        public Object ExecuteScalarParm ( SqlCommand cmd )
+        {
+            // SqlCommand command = new SqlCommand ( sqlQuery, _conn );
+            cmd.Connection = _conn;
+            return cmd.ExecuteScalar ();
+        }
+
+
         public SqlDataReader ExecuteReader(String sqlQuery)
         {
             SqlCommand command = new SqlCommand(sqlQuery, _conn);
             return command.ExecuteReader();
+        }
+
+        public SqlDataReader ExecuteReaderParm ( SqlCommand command )
+        {
+            command.Connection = _conn;
+            return command.ExecuteReader ();
         }
 
         public void Dispose()

@@ -66,19 +66,21 @@
             <input type="text" name="login" id="txtLogin" value="@ViewBag.Login" autofocus required><br><br>
             <span><b>Password</b></span><br>
             <input type="password" name="password" id="txtPassword" required><br />
-            <a href="#" id="forgotPasswd" style="color:red;text-decoration:none">Forgot Password?</a><br><br><br><br>
-            <input class="btn" type="button" name="btnLogin" id="btnLogin" value="Login" style="width:30%;padding: 5px 8px;" onclick="return validate();">
-            <input class="btn" type="reset" name="btnCancel" id="btnCancel" value="Cancel" style="width :30%;padding:5px 8px;"><br><br><br>
-            <span style="color:red;">@ViewBag.MSG</span>
-            <div id="resetPasswd">
-                <form action="@Url.Content("~/User/ResetPassword")" method="post">
-                    <span><b>Login</b></span><br>
-                    <input type="text" id="Login" name="Login" required><br>
-                    <span><b>Email</b></span><br>
-                    <input type="text" id="Email" name="Email" required><br><br />
-                    <input class="btn" type="submit" name="btnResetPass" id="btnResetPass" value="Reset Password" style="width:30%;padding: 5px 8px;width:60%;">
-                 </form>
+            <a href="#" id="forgotPasswd" style="color:red;text-decoration:none">Forgot Password?</a><br>
+            <span style="color:red;">@ViewBag.msgEmailFailed</span>
+            <span style="color:red;">@ViewBag.msgRecNotFound</span><br /><br /><br />
+                <input class="btn" type="button" name="btnLogin" id="btnLogin" value="Login" style="width:30%;padding: 5px 8px;" onclick="return validate();">
+                <input class="btn" type="reset" name="btnCancel" id="btnCancel" value="Cancel" style="width :30%;padding:5px 8px;"><br><br><br>
+                <span style="color:red;">@ViewBag.MSG</span>
+                <div id="resetPasswd">
+                    <form action="@Url.Content("~/User/ResetPassword")" method="post">
+                        <span><b>Login</b></span><br>
+                        <input type="text" id="Login" name="Login" value="@ViewBag.login" required><br>
+                        <span><b>Email</b></span><br>
+                        <input type="text" id="Email" name="Email" required><br><br />
+                        <input class="btn" type="submit" name="btnResetPass" id="btnResetPass" value="Reset Password" style="width:30%;padding: 5px 8px;width:60%;">
+                    </form>
+                </div>
 </div>
-        </div>
 </div>
 
