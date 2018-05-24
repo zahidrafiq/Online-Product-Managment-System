@@ -104,7 +104,7 @@ namespace PMS.DAL
         {
             using (DBHelper helper = new DBHelper())
             {
-                var query = "Select * from dbo.Users Where IsActive = 1;";
+                var query = "Select * from Users Where IsActive = 1;";
                 var reader = helper.ExecuteReader(query);
                 List<UserDTO> list = new List<UserDTO>();
 

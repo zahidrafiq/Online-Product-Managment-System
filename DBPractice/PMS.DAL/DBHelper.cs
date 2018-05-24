@@ -11,8 +11,8 @@ namespace PMS.DAL
     internal class DBHelper : IDisposable
     {
         //String _connStr = System.Configuration.ConfigurationManager.ConnectionStrings["MyConnString"].ConnectionString;
-        //String _connStr = "server=localhost;port=3306;Uid=sa;Pwd=zahid123; database=Assignment7PMS;";
-        String _connStr = @"Server=localhost;port=3306;Uid=root;Pwd=;Database=Assignment7PMS";
+       // String _connStr = "server=localhost;port=3306;Uid=sa;Pwd=zahid123; database=Assignment7PMS;";
+        String _connStr = @"Server=localhost;port=3306;Uid=root;Pwd=;Database=Assignment7PMS;Convert Zero Datetime = true";
         MySqlConnection _conn = null;
         public DBHelper ()
         {

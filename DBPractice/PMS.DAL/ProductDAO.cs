@@ -21,7 +21,7 @@ namespace PMS.DAL
 //                    sqlQuery = String.Format ( "Update dbo.Products Set Name='{0}',Price='{1}',PictureName='{2}',ModifiedOn='{3}',ModifiedBy='{4}' Where ProductID={5}",
   //                      dto.Name, dto.Price, dto.PictureName, dto.ModifiedOn, dto.ModifiedBy, dto.ProductID );
 
-                    sqlQuery = String.Format ( @"Update dbo.Products Set Name=@name,Price=@price,PictureName=@picname,ModifiedOn=@modifiedon,ModifiedBy=@modifiedby Where ProductID=@pid");
+                    sqlQuery = String.Format ( @"Update Products Set Name=@name,Price=@price,PictureName=@picname,ModifiedOn=@modifiedon,ModifiedBy=@modifiedby Where ProductID=@pid");
                     MySqlCommand cmd = new MySqlCommand ( sqlQuery );
                     //cmd.Connection = conn;
                     //SqlParameter parm = new SqlParameter ();
@@ -101,9 +101,9 @@ namespace PMS.DAL
                 }
                 if (pLoadComments == true)
                 {
-                    //var commentsList = CommentDAO.GetAllComments();
+                    var commentsList = CommentDAO.GetAllComments();
 
-                    var commentsList = CommentDAO.GetTopComments(2);
+                    //var commentsList = CommentDAO.GetTopComments(2);
 
                     foreach (var prod in list)
                     {

@@ -28,7 +28,7 @@ namespace PMS.DAL
         public static CommentDTO GetCommentById(int pid)
         {
 
-            var query = String.Format("Select * from dbo.Comments Where CommentId={0}", pid);
+            var query = String.Format("Select * from Comments Where CommentId={0}", pid);
 
             using (DBHelper helper = new DBHelper())
             {
