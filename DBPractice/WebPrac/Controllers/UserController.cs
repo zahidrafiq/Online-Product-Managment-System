@@ -178,7 +178,7 @@ namespace WebPrac.Controllers
                     urlToRedirect = url
                 };
             }
-            catch (Exception)
+            catch (Exception exp)
             {
                 data = new
                 {

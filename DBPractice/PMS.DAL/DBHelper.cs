@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MySql.Data.MySqlClient;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
@@ -9,37 +10,39 @@ namespace PMS.DAL
 {
     internal class DBHelper : IDisposable
     {
-        String _connStr = System.Configuration.ConfigurationManager.ConnectionStrings["MyConnString"].ConnectionString;
-        SqlConnection _conn = null;
-        public DBHelper()
+        //String _connStr = System.Configuration.ConfigurationManager.ConnectionStrings["MyConnString"].ConnectionString;
+        //String _connStr = "server=localhost;port=3306;Uid=sa;Pwd=zahid123; database=Assignment7PMS;";
+        String _connStr = @"Server=localhost;port=3306;Uid=root;Pwd=;Database=Assignment7PMS";
+        MySqlConnection _conn = null;
+        public DBHelper ()
         {
-            _conn = new SqlConnection(_connStr);
-            _conn.Open();
+            _conn = new MySqlConnection ( _connStr );
+            _conn.Open ();
         }
-        public DBHelper getConn()
+        public DBHelper getConn ()
         {
             return new DBHelper ();
         }
-        public int ExecuteQuery(String sqlQuery)
+        public int ExecuteQuery ( String sqlQuery )
         {
-            SqlCommand command = new SqlCommand(sqlQuery, _conn);
-            var count = command.ExecuteNonQuery();
+            MySqlCommand command = new MySqlCommand ( sqlQuery, _conn );
+            var count = command.ExecuteNonQuery ();
             return count;
         }
 
-        public int ExecuteQueryParm ( SqlCommand command )
+        public int ExecuteQueryParm ( MySqlCommand command )
         {
             command.Connection = _conn;
             var count = command.ExecuteNonQuery ();
             return count;
         }
-        public Object ExecuteScalar(String sqlQuery)
+        public Object ExecuteScalar ( String sqlQuery )
         {
-            SqlCommand command = new SqlCommand(sqlQuery, _conn);
-            return command.ExecuteScalar();
+            MySqlCommand command = new MySqlCommand ( sqlQuery, _conn );
+            return command.ExecuteScalar ();
         }
 
-        public Object ExecuteScalarParm ( SqlCommand cmd )
+        public Object ExecuteScalarParm ( MySqlCommand cmd )
         {
             // SqlCommand command = new SqlCommand ( sqlQuery, _conn );
             cmd.Connection = _conn;
@@ -47,22 +50,22 @@ namespace PMS.DAL
         }
 
 
-        public SqlDataReader ExecuteReader(String sqlQuery)
+        public MySqlDataReader ExecuteReader ( String sqlQuery )
         {
-            SqlCommand command = new SqlCommand(sqlQuery, _conn);
-            return command.ExecuteReader();
+            MySqlCommand command = new MySqlCommand ( sqlQuery, _conn );
+            return command.ExecuteReader ();
         }
 
-        public SqlDataReader ExecuteReaderParm ( SqlCommand command )
+        public MySqlDataReader ExecuteReaderParm ( MySqlCommand command )
         {
             command.Connection = _conn;
             return command.ExecuteReader ();
         }
 
-        public void Dispose()
+        public void Dispose ()
         {
             if (_conn != null && _conn.State == System.Data.ConnectionState.Open)
-                _conn.Close();
+                _conn.Close ();
         }
     }
 }

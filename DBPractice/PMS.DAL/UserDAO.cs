@@ -1,4 +1,5 @@
-﻿using PMS.Entities;
+﻿using MySql.Data.MySqlClient;
+using PMS.Entities;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -15,7 +16,7 @@ namespace PMS.DAL
             String sqlQuery = "";
             if (dto.UserID > 0)
             {
-                sqlQuery = String.Format( "Update dbo.Users Set Name='{0}', PictureName='{1}', email='{2}' Where UserID={3} ;select @@IDENTITY",
+                sqlQuery = String.Format( "Update Users Set Name='{0}', PictureName='{1}', email='{2}' Where UserID={3} ;select @@IDENTITY",
                     dto.Name, dto.PictureName, dto.Email,dto.UserID);
                 using (DBHelper helper = new DBHelper ())
                 {
@@ -29,7 +30,7 @@ namespace PMS.DAL
             }
             else
             {
-                sqlQuery = String.Format("INSERT INTO dbo.Users(Name, Login,Password, PictureName, IsAdmin,IsActive,email) VALUES('{0}','{1}','{2}','{3}',{4},{5},'{6}');select @@IDENTITY",
+                sqlQuery = String.Format("INSERT INTO Users(Name, Login,Password, PictureName, IsAdmin,IsActive,email) VALUES('{0}','{1}','{2}','{3}',{4},{5},'{6}');select @@IDENTITY",
                 dto.Name, dto.Login, dto.Password, dto.PictureName, 0,1,dto.Email);
                 using (DBHelper helper = new DBHelper ())
                 {
@@ -43,7 +44,7 @@ namespace PMS.DAL
         public static int UpdatePassword(UserDTO dto)
         {
             String sqlQuery = "";
-            sqlQuery = String.Format("Update dbo.Users Set Password='{0}' Where UserID={1}", dto.Password, dto.UserID);
+            sqlQuery = String.Format("Update Users Set Password='{0}' Where UserID={1}", dto.Password, dto.UserID);
 
 
             using (DBHelper helper = new DBHelper())
@@ -54,21 +55,14 @@ namespace PMS.DAL
 
         public static UserDTO ValidateUser(String pLogin, String pPassword)
         {
-            var query = String.Format(@"Select * from dbo.Users Where Login=@login and Password=@pwd");
-            SqlCommand cmd = new SqlCommand ( query );
+            var query = String.Format(@"Select * from Users Where Login=@login and Password=@pwd");
+            MySqlCommand cmd = new MySqlCommand ( query );
 
-            SqlParameter parm = new SqlParameter ();
-            parm.ParameterName = "login";
-            parm.SqlDbType = System.Data.SqlDbType.VarChar;
-            parm.Value = pLogin;
-            cmd.Parameters.Add ( parm );
+            
+            cmd.Parameters.AddWithValue ( "login", pLogin );
 
             //            parm = new SqlParameter ( "pwd", System.Data.SqlDbType.VarChar );
-            parm = new SqlParameter ();
-            parm.ParameterName = "pwd";
-            parm.SqlDbType = System.Data.SqlDbType.VarChar;
-            parm.Value = pPassword;
-            cmd.Parameters.Add ( parm );
+            cmd.Parameters.AddWithValue ( "pwd", pPassword );
 
 
             using (DBHelper helper = new DBHelper())
@@ -89,7 +83,7 @@ namespace PMS.DAL
         public static UserDTO GetUserById(int pid)
         {
 
-            var query = String.Format("Select * from dbo.Users Where UserId={0}", pid);
+            var query = String.Format("Select * from Users Where UserId={0}", pid);
 
             using (DBHelper helper = new DBHelper())
             {
@@ -129,7 +123,7 @@ namespace PMS.DAL
 
         public static int DeleteUser(int pid)
         {
-            String sqlQuery = String.Format("Update dbo.Users Set IsActive=0 Where UserID={0}", pid);
+            String sqlQuery = String.Format("Update Users Set IsActive=0 Where UserID={0}", pid);
 
             using (DBHelper helper = new DBHelper())
             {
@@ -137,7 +131,7 @@ namespace PMS.DAL
             }
         }
 
-        private static UserDTO FillDTO(SqlDataReader reader)
+        private static UserDTO FillDTO(MySqlDataReader reader)
         {
             var dto = new UserDTO();
             dto.UserID = reader.GetInt32(0);
@@ -160,7 +154,7 @@ namespace PMS.DAL
             using (SqlConnection conn = new SqlConnection ( conStr ))
             {
                 conn.Open ();
-                String query = String.Format ( @"SELECT * FROM dbo.Users WHERE Login='{0}' AND Email='{1}'", login, email );
+                String query = String.Format ( @"SELECT * FROM Users WHERE Login='{0}' AND Email='{1}'", login, email );
                 try
                 {
                     SqlCommand cmd = new SqlCommand ( query, conn );
